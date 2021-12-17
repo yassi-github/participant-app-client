@@ -6,11 +6,12 @@ pub struct Configures {
     user_id: String,
     name: String,
     request_path: String,
+    server_dest: String,
 }
 
 pub struct SettingsData {
     pub user_data: UserData,
-    pub request_path: PathData,
+    pub dest_data: DestData,
 }
 
 pub struct UserData {
@@ -18,7 +19,8 @@ pub struct UserData {
     pub name: String,
 }
 
-pub struct PathData {
+pub struct DestData {
+    pub server_dest: String,
     pub request_path: String,
 }
 
@@ -28,6 +30,7 @@ pub struct PathData {
 /// ```
 /// userid: 19T999
 /// name: kagawa-taro
+/// server_dest: 192.0.2.10:8080
 /// request_path: /user
 /// ```
 pub fn read_settings() -> Result<SettingsData, Box<dyn std::error::Error>> {
@@ -48,7 +51,8 @@ pub fn read_settings() -> Result<SettingsData, Box<dyn std::error::Error>> {
             user_id: something_config.user_id,
             name: something_config.name,
         },
-        request_path: PathData {
+        dest_data: DestData {
+            server_dest: something_config.server_dest,
             request_path: something_config.request_path,
         },
     };
@@ -82,9 +86,9 @@ pub fn read_configures_from_yaml_file() -> Result<Configures, Box<dyn std::error
 //     readed_data_user
 // }
 
-// pub fn get_request_path() -> PathData {
+// pub fn get_request_path() -> DestData {
 //     //
-//     let readed_data_path = PathData {
+//     let readed_data_path = DestData {
 //         request_path: String::from("/user"),
 //     };
 

@@ -31,5 +31,4 @@ fn main() {
             1
         }
     });
-    println!("TEST RUN FINISHED!");
 }

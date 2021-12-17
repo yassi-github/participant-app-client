@@ -1,7 +1,6 @@
 //! The client-side command line tool
 //! for [participant-app](https://github.com/higuruchi/participant-app).
 
-use participant_register::generate_body::{header, user};
 use participant_register::httpreq::request;
 
 /// Regist user infomation.
@@ -21,18 +20,16 @@ fn main() {
     // macaddress=aa:aa:aa:aa:aa:aa\n\
     // "
     // uncode.  :poop:
-    let request_header = header::generate_headerdata().unwrap();
-    let request_body_data = user::generate_request_body().unwrap();
+    // let request_header = header::generate_headerdata().unwrap();
+    // let request_body_data = user::generate_request_body().unwrap();
 
     // exit with status code.
-    std::process::exit(
-        match request::regist_user(request_header, request_body_data) {
-            Ok(_) => 0,
-            Err(err) => {
-                eprintln!("An Error Occured!\nError is: {:?}", err);
-                1
-            }
-        },
-    );
+    std::process::exit(match request::regist_user() {
+        Ok(_) => 0,
+        Err(err) => {
+            eprintln!("An Error Occured!\nError is: {:?}", err);
+            1
+        }
+    });
     println!("TEST RUN FINISHED!");
 }

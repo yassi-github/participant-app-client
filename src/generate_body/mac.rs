@@ -1,5 +1,11 @@
-pub fn gen_mac() -> String {
-    // 
-    let mac_data = String::from("xx:xx:xx:xx:xx:xx");
-    mac_data
+use mac_address;
+use mac_address::MacAddressError;
+
+pub fn gen_mac() -> Result<mac_address::MacAddress, MacAddressError> {
+    let mac_data = mac_address::get_mac_address()?;
+    match mac_data {
+        Some(m) => Ok(m),
+        None => return Err(MacAddressError::InternalError),
+    }
+
 }

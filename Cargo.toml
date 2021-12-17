@@ -8,3 +8,4 @@ edition = "2018"
 [dependencies]
 serde = { version = "^1.0.132", features = ["derive"] }
 serde_yaml = "^0.8.23"
+mac_address = "^1.1.2"

@@ -3,7 +3,7 @@ use crate::userdata;
 /// generate body.
 /// this uses mac addr data from mac.rs
 pub fn generate_request_body() -> Result<String, Box<dyn std::error::Error>> {
-    let mac_data = mac::gen_mac();
+    let mac_data = mac::gen_mac()?;
     let readed_data = userdata::input_yaml::read_settings()?;
 
     let id = readed_data.user_data.user_id;
@@ -11,9 +11,9 @@ pub fn generate_request_body() -> Result<String, Box<dyn std::error::Error>> {
     let request_body = format!(
         "id={}\n\
         name={}\n\
-        macaddress=aa:aa:aa:aa:aa:aa\n\
+        macaddress={}\n\
         ",
-        id, name
+        id, name, mac_data
     );
 
     //     let request_body_ = String::from(

@@ -3,27 +3,27 @@ use std::io::Read;
 
 #[derive(Debug, Deserialize)]
 pub struct Configures {
-    userid: String,
+    user_id: String,
     name: String,
     request_path: String,
 }
 
 pub struct SettingsData {
-    userdata: UserData,
-    request_path: PathData
+    pub user_data: UserData,
+    pub request_path: PathData,
 }
 
 pub struct UserData {
-    userid: String,
-    name: String,
+    pub user_id: String,
+    pub name: String,
 }
 
 pub struct PathData {
-    request_path: String,
+    pub request_path: String,
 }
 
 /// read user conf from yaml file
-/// 
+///
 /// example yaml format:
 /// ```
 /// userid: 19T999
@@ -44,8 +44,8 @@ pub fn read_settings() -> Result<SettingsData, Box<dyn std::error::Error>> {
     // let readed_data_path = get_request_path();
 
     let settings_data = SettingsData {
-        userdata: UserData {
-            userid: something_config.userid,
+        user_data: UserData {
+            user_id: something_config.user_id,
             name: something_config.name,
         },
         request_path: PathData {
@@ -62,10 +62,10 @@ pub fn read_settings() -> Result<SettingsData, Box<dyn std::error::Error>> {
 }
 
 // This function reads configures to String from yaml file.
-// Filename is "something.yaml".
+// Filename is "participant-app.conf".
 // To deserialise yaml file to String, use 'serde_yaml' crate.
 pub fn read_configures_from_yaml_file() -> Result<Configures, Box<dyn std::error::Error>> {
-    let mut file = std::fs::File::open("something.yaml")?;
+    let mut file = std::fs::File::open("participant-app.conf")?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
     let configures: Configures = serde_yaml::from_str(&contents)?;
@@ -73,7 +73,7 @@ pub fn read_configures_from_yaml_file() -> Result<Configures, Box<dyn std::error
 }
 
 // pub fn get_userdata() -> UserData {
-//     // 
+//     //
 //     let readed_data_user = UserData {
 //         userid: String::from("19T999"),
 //         name: String::from("kagawa-taro"),
@@ -83,7 +83,7 @@ pub fn read_configures_from_yaml_file() -> Result<Configures, Box<dyn std::error
 // }
 
 // pub fn get_request_path() -> PathData {
-//     // 
+//     //
 //     let readed_data_path = PathData {
 //         request_path: String::from("/user"),
 //     };

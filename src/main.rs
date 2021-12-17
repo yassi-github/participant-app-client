@@ -17,14 +17,15 @@ use participant_register::httpreq::request;
 /// 1. regist_user by POST Request
 fn main() {
     let body_data = user::generate_request_body();
-    let server_dest = input_yaml::read_settings();
+    // let server_dest = input_yaml::read_settings();
     
-    // exit with status code.
-    std::process::exit(match request::regist_user(body_data, server_dest) {
-        Ok(_) => 0,
-        Err(err) => {
-            eprintln!("An Error Occured!\nError is: {:?}", err);
-            1
-        }
-    });
+    // // exit with status code.
+    // std::process::exit(match request::regist_user(body_data, server_dest) {
+    //     Ok(_) => 0,
+    //     Err(err) => {
+    //         eprintln!("An Error Occured!\nError is: {:?}", err);
+    //         1
+    //     }
+    // });
+    println!("TEST RUN FINISHED!");
 }

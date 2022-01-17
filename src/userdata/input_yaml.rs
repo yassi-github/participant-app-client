@@ -5,8 +5,9 @@ use std::io::Read;
 pub struct Configures {
     user_id: String,
     name: String,
-    request_path: String,
     server_dest: String,
+    regist_path: String,
+    get_path: String,
 }
 
 pub struct SettingsData {
@@ -21,17 +22,19 @@ pub struct UserData {
 
 pub struct DestData {
     pub server_dest: String,
-    pub request_path: String,
+    pub regist_path: String,
+    pub get_path: String,
 }
 
 /// read user conf from yaml file
 ///
 /// example yaml format:
 /// ```
-/// userid: 19T999
-/// name: kagawa-taro
-/// server_dest: 192.0.2.10:8080
-/// request_path: /user
+/// user_id: '19T999'
+/// name: "kagawa-taro"
+/// server_dest: "192.168.12.10:8080"
+/// regist_path: "/user"
+/// get_path: "/participants/:year/:month/:date"
 /// ```
 pub fn read_settings() -> Result<SettingsData, Box<dyn std::error::Error>> {
     // read from yaml file
@@ -53,7 +56,8 @@ pub fn read_settings() -> Result<SettingsData, Box<dyn std::error::Error>> {
         },
         dest_data: DestData {
             server_dest: something_config.server_dest,
-            request_path: something_config.request_path,
+            regist_path: something_config.regist_path,
+            get_path: something_config.get_path,
         },
     };
 

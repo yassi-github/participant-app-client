@@ -1,7 +1,8 @@
 //! The client-side command line tool
 //! for [participant-app](https://github.com/higuruchi/participant-app).
 
-use participant_register::httpreq::request;
+use participant_register::{Cli, Action, httpreq};
+use clap::Parser;
 
 /// Regist user infomation.
 /// POST id, name, MAC address to /user
@@ -23,11 +24,38 @@ fn main() {
     // let request_header = header::generate_headerdata().unwrap();
     // let request_body_data = user::generate_request_body().unwrap();
 
+    let args = Cli::parse();
+
+    let subcmd_result: Result<String, Box<dyn std::error::Error>>;
+    match args.action {
+        // regist subcommand
+        // Action::Regist(_regist_args) => {
+        Action::Regist => {
+            //(仮)
+            subcmd_result = httpreq::request::regist_user();
+            // exit_message:
+            //    Hello, {stnum} {name}!
+            //    Information registed successfully.
+            //    Registed MAC Address: {macaddr}
+            //    Have a nice day!
+            // expected:
+            // subcmd_result = httpreq::request::regist_user(regist_args.name, regist_args.stnum);
+        },
+        // get subcommand
+        Action::Get(get_args) => {
+            subcmd_result = httpreq::get::get_participants(get_args);
+        },
+    }
+
     // exit with status code.
-    std::process::exit(match request::regist_user() {
-        Ok(_) => 0,
+    std::process::exit(match subcmd_result {
+        Ok(exit_message) => {
+            // println!("EXIT_MESSAGE: `{}`", exit_message);
+            println!("{}", exit_message);
+            0
+        },
         Err(err) => {
-            eprintln!("An Error Occured!\nError is: {:?}", err);
+            eprintln!("ERROR: `{}`", err);
             1
         }
     });

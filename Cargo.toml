@@ -2,10 +2,16 @@
 name = "participant-register"
 version = "0.1.0"
 edition = "2018"
+authors = ["yassi-github <s19t312@kagawa-u.ac.jp>"]
+description = "Participant-App Client CLI Tool"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 serde = { version = "^1.0.132", features = ["derive"] }
+serde_json = "^1.0.74"
 serde_yaml = "^0.8.23"
 mac_address = "^1.1.2"
+clap = { version = "^3.0.5", features = ["derive"] }
+chrono = "^0.4.19"
+form_urlencoded = "^1.0.1"

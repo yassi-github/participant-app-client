@@ -17,7 +17,7 @@ pub struct Cli {
 }
 
 // #[derive(Args)]
-// pub struct RegistArgs { 
+// pub struct RegistArgs {
 //     // student name
 //     #[clap(short, long)]
 //     pub name: String,
@@ -28,13 +28,13 @@ pub struct Cli {
 // }
 
 #[derive(Args)]
-pub struct GetArgs { 
+pub struct GetArgs {
     #[clap(short, long, default_value_t = Local::today().year())]
     pub year: i32,
 
     #[clap(short, long, default_value_t = Local::today().month())]
     pub month: u32,
-    
+
     #[clap(short, long, default_value_t = Local::today().day())]
     pub day: u32,
 }

@@ -1,13 +1,7 @@
 use crate::generate_body::user;
 use crate::userdata::input_yaml;
 use crate::httpreq;
-/// post sample:
-///
-/// ```
-/// id=19T999
-/// name=kagawa-taro
-/// macaddress=aa:aa:aa:aa:aa:aa
-/// ```
+
 
 pub fn regist_user() -> Result<String, Box<dyn std::error::Error>> {
 

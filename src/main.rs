@@ -20,16 +20,12 @@ fn main() {
     // name={}\n\
     // macaddress=aa:aa:aa:aa:aa:aa\n\
     // "
-    // uncode.  :poop:
-    // let request_header = header::generate_headerdata().unwrap();
-    // let request_body_data = user::generate_request_body().unwrap();
 
     let args = Cli::parse();
 
     let subcmd_result: Result<String, Box<dyn std::error::Error>>;
     match args.action {
         // regist subcommand
-        // Action::Regist(_regist_args) => {
         Action::Regist => {
             //(仮)
             subcmd_result = httpreq::request::regist_user();
@@ -50,7 +46,6 @@ fn main() {
     // exit with status code.
     std::process::exit(match subcmd_result {
         Ok(exit_message) => {
-            // println!("EXIT_MESSAGE: `{}`", exit_message);
             println!("{}", exit_message);
             0
         },

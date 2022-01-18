@@ -34,20 +34,12 @@ pub struct DestData {
 /// name: "kagawa-taro"
 /// server_dest: "192.168.12.10:8080"
 /// regist_path: "/user"
-/// get_path: "/participants/:year/:month/:date"
+/// get_path: "/participants/:year/:month/:day"
 /// ```
 pub fn read_settings() -> Result<SettingsData, Box<dyn std::error::Error>> {
     // read from yaml file
     // receive Configures struct from read_configures_from_yaml_file()
     let something_config = read_configures_from_yaml_file()?;
-    // let something_config = match read_configures_from_yaml_file() {
-    //     Ok(config) => config,
-    //     Err(err) => return Err(err),
-    // };
-    // println!("{:?}, userid: {:?}, name: {:?}", something_config, something_config.userid, something_config.name);
-
-    // let readed_data_user = get_userdata();
-    // let readed_data_path = get_request_path();
 
     let settings_data = SettingsData {
         user_data: UserData {
@@ -61,40 +53,18 @@ pub fn read_settings() -> Result<SettingsData, Box<dyn std::error::Error>> {
         },
     };
 
-    // let readed_data = SettingsData {
-    //     userdata: readed_data_user,
-    //     request_path: readed_data_path,
-    // };
 
     Ok(settings_data)
 }
 
 // This function reads configures to String from yaml file.
 // Filename is "participant-app.conf".
-// To deserialise yaml file to String, use 'serde_yaml' crate.
 pub fn read_configures_from_yaml_file() -> Result<Configures, Box<dyn std::error::Error>> {
     let mut file = std::fs::File::open("participant-app.conf")?;
     let mut contents = String::new();
     file.read_to_string(&mut contents)?;
     let configures: Configures = serde_yaml::from_str(&contents)?;
+
+
     Ok(configures)
 }
-
-// pub fn get_userdata() -> UserData {
-//     //
-//     let readed_data_user = UserData {
-//         userid: String::from("19T999"),
-//         name: String::from("kagawa-taro"),
-//     };
-
-//     readed_data_user
-// }
-
-// pub fn get_request_path() -> DestData {
-//     //
-//     let readed_data_path = DestData {
-//         request_path: String::from("/user"),
-//     };
-
-//     readed_data_path
-// }

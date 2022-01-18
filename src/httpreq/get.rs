@@ -13,7 +13,7 @@ pub fn get_participants(date_args: crate::GetArgs)-> Result<String, Box<dyn std:
     let path = input_yaml::read_settings()?.dest_data.get_path;
     let path = path.replace(":year", &date_args.year.to_string());
     let path = path.replace(":month", &date_args.month.to_string());
-    let path = path.replace(":date", &date_args.day.to_string());
+    let path = path.replace(":day", &date_args.day.to_string());
     // shouldbe changed to below.
     // more info: <https://github.com/higuruchi/participant-app/issues/24#issue-1104164332>
     // path = path.replace(":day", &date_args.day.to_string());

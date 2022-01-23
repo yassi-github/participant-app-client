@@ -1,0 +1,149 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env:
+  RLDB_IMAGE: 'joseluisq/rust-linux-darwin-builder:1.58'
+  RLDB_DIGEST: '3901f2951643aab78b137325a0f086a7691ab220494c28c4422790e5956da891'
+  RLDB_CACHE_PATH: './rust-linux-darwin-builder'
+  GRM_PATH: './git-restore-mtime.py'
+
+jobs:
+
+  cross_build:
+
+    strategy:
+      matrix:
+        rust: [stable]
+        target: [x86_64-unknown-linux-musl, x86_64-apple-darwin, x86_64-pc-windows-gnu]
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Setup Rust
+      uses: hecrj/setup-rust-action@v1
+      with:
+        rust-version: ${{ matrix.rust }}
+
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        # Fetch all commit history for mtime
+        fetch-depth: 0
+
+    - name: Create config values
+      id: config_values
+      run: |
+        VERSION=$(grep version Cargo.toml | head -1 | cut -d'=' -f2 | tr -d '[ \"]')
+        REPOSITORY_NAME=$(echo $GITHUB_REPOSITORY | cut -d'/' -f2)
+        echo "::set-output name=VERSION::${VERSION}"
+        echo "::set-output name=REPOSITORY_NAME::${REPOSITORY_NAME}"
+
+# cache
+# ----------------------------------------------------
+
+    - name: Cache Rust libs
+      id: cache-rustlib
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+          target
+        key: ${{ runner.os }}-cargo-${{ hashFiles( format('{0}{1}', github.workspace, '/Cargo.lock') ) }}
+        restore-keys:
+          ${{ runner.os }}-cargo-
+
+    - name: Cache git-restore-mtime script
+      id: cache-grm
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.GRM_PATH }}
+        key: ${{ runner.os }}-grm-${{ hashFiles( format('{0}', env.GRM_PATH) ) }}
+        restore-keys:
+          ${{ runner.os }}-grm-
+
+    - name: DL if no cache hit
+      if: steps.cache-grm.outputs.cache-hit != 'true'
+      run: curl -Lo ${{ env.GRM_PATH }} "https://github.com/MestreLion/git-tools/raw/main/git-restore-mtime"
+
+    - name: Restore mtime
+      run: python ${{ env.GRM_PATH }}
+
+# cache for mac cross build
+# ----------------------------------------------------
+
+    - name: Cache rldb docker image
+      if: matrix.target == 'x86_64-apple-darwin'
+      id: cache-rldb
+      uses: actions/cache@v2
+      with:
+        path: ${{ env.CACHE_PATH }}
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ env.RLDB_DIGEST }}
+
+    - name: Load docker image from cache
+      if: steps.cache-rldb.outputs.cache-hit == 'true' &&
+        matrix.target == 'x86_64-apple-darwin'
+      run: docker load --input ${{ env.CACHE_PATH }}
+
+    - name: Pull docker image and save for cache
+      if: steps.cache-rldb.outputs.cache-hit != 'true' &&
+        matrix.target == 'x86_64-apple-darwin'
+      run: |
+        docker pull ${{ env.RLDB_IMAGE }}
+        docker save --output ${{ env.CACHE_PATH }} ${{ env.RLDB_IMAGE }}
+
+# build
+# ----------------------------------------------------
+
+    - name: Build for Linux(MUSL)
+      if: matrix.target == 'x86_64-unknown-linux-musl'
+      run: |
+        rustup target add ${{ matrix.target }}
+        sudo apt install -y musl-tools
+        cargo build --release --target=${{ matrix.target }}
+        chmod +x target/${{ matrix.target }}/release/${{ steps.config_values.outputs.REPOSITORY_NAME }}
+        zip -j -v ${{ steps.config_values.outputs.REPOSITORY_NAME }}-v${{ steps.config_values.outputs.VERSION }}-x86_64-linux.zip \
+          target/${{ matrix.target }}/release/${{ steps.config_values.outputs.REPOSITORY_NAME }} \
+          participant-app-client.conf
+
+    - name: Build for Windows(GNU)
+      if: matrix.target == 'x86_64-pc-windows-gnu'
+      run: |
+        rustup target add ${{ matrix.target }}
+        sudo apt install -y mingw-w64
+        cargo build --release --target=${{ matrix.target }}
+        chmod +x target/${{ matrix.target }}/release/${{ steps.config_values.outputs.REPOSITORY_NAME }}.exe
+        zip -j -v ${{ steps.config_values.outputs.REPOSITORY_NAME }}-v${{ steps.config_values.outputs.VERSION }}-x86_64-windows.zip \
+          target/${{ matrix.target }}/release/${{ steps.config_values.outputs.REPOSITORY_NAME }}.exe \
+          participant-app-client.conf
+
+    - name: Build for macOS(x86_64)
+      if: matrix.target == 'x86_64-apple-darwin'
+      run: |
+        docker run --rm \
+          --volume "${PWD}":/root/src \
+          --workdir /root/src \
+          ${{ env.RLDB_IMAGE }} \
+          sh -c "cargo build --release --target ${{ matrix.target }}; \
+            chown -R 1000:1000 target/${{ matrix.target }}/; \
+            chmod -R a+x target/${{ matrix.target }}/release/"
+        zip -j -v ${{ steps.config_values.outputs.REPOSITORY_NAME }}-v${{ steps.config_values.outputs.VERSION }}-x86_64-macos.zip \
+          target/${{ matrix.target }}/release/${{ steps.config_values.outputs.REPOSITORY_NAME }} \
+          participant-app-client.conf
+
+# release
+# ----------------------------------------------------
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        body: ':tada: Release'
+        files: |
+          *.zip
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

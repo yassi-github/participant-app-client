@@ -1,7 +1,7 @@
 //! The client-side command line tool
 //! for [participant-app](https://github.com/higuruchi/participant-app).
 
-use participant_register::{Cli, Action, httpreq};
+use participant_app_client::{Cli, Action, httpreq};
 use clap::Parser;
 
 /// Regist user infomation.

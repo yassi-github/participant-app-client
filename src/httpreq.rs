@@ -55,7 +55,7 @@ Content-Length: {}\r\n\
     };
 
     // server address
-    let address: String = input_yaml::read_settings()?.dest_data.server_dest;
+    let address: String = input_yaml::read_settings()?.server.destination;
     let address: std::net::SocketAddr = address.parse().expect("Invalid address");
 
     let mut stream = TcpStream::connect(&address)?;

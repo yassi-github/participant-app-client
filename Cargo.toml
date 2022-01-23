@@ -1,6 +1,6 @@
 [package]
 name = "participant-register"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2018"
 authors = ["yassi-github <s19t312@kagawa-u.ac.jp>"]
 description = "Participant-App Client CLI Tool"

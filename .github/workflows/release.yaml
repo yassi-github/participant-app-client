@@ -82,20 +82,20 @@ jobs:
       id: cache-rldb
       uses: actions/cache@v2
       with:
-        path: ${{ env.CACHE_PATH }}
-        key: ${{ runner.os }}-${{ env.cache-name }}-${{ env.RLDB_DIGEST }}
+        path: ${{ env.RLDB_CACHE_PATH }}
+        key: ${{ runner.os }}-rldb-${{ env.RLDB_DIGEST }}
 
     - name: Load docker image from cache
       if: steps.cache-rldb.outputs.cache-hit == 'true' &&
         matrix.target == 'x86_64-apple-darwin'
-      run: docker load --input ${{ env.CACHE_PATH }}
+      run: docker load --input ${{ env.RLDB_CACHE_PATH }}
 
     - name: Pull docker image and save for cache
       if: steps.cache-rldb.outputs.cache-hit != 'true' &&
         matrix.target == 'x86_64-apple-darwin'
       run: |
         docker pull ${{ env.RLDB_IMAGE }}
-        docker save --output ${{ env.CACHE_PATH }} ${{ env.RLDB_IMAGE }}
+        docker save --output ${{ env.RLDB_CACHE_PATH }} ${{ env.RLDB_IMAGE }}
 
 # build
 # ----------------------------------------------------
@@ -147,3 +147,4 @@ jobs:
           *.zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

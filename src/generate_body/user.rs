@@ -8,8 +8,8 @@ pub fn generate_request_body() -> Result<String, Box<dyn std::error::Error>> {
     let mac_data = mac::gen_mac()?.to_string();
     let readed_data = userdata::input_yaml::read_settings()?;
 
-    let id = readed_data.user_data.user_id;
-    let name = readed_data.user_data.name;
+    let id = readed_data.user.id;
+    let name = readed_data.user.name;
 
     // sample POST body:
     // id=19T999&name=kagawataro&macaddress=aa%3Aaa%3Aaa%3Aaa%3Aaa%3Aaa

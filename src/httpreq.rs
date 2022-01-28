@@ -85,10 +85,15 @@ Content-Length: {}\r\n\
                     // ただし，BUFFERSIZE 大(bufferを埋められず，いきなりここが実行された)のときは，left_buffer_len は BUFFER_SIZE であるので，
                     // bufferをここで更新しても何も変わらない(0u8を含むbufferのまま)．
                     buffer = buffer[..left_buffer_len].to_vec();
+                    // bufferが空のとき，スライスできないのでここで終了
+                    if buffer.len() == 0 {
+                        break;
+                    }
                     // bufferに残ってる 0u8 を消すための idx を求める
                     let non_zero_idx: usize = match buffer.iter().rposition(|&x| x != BUFFER_INIT_PADDING_BIT) {
                         Some(idx) => idx,
-                        None => BUFFER_SIZE,
+                        // buffer が全て 0u8 の場合．
+                        None => break,
                     };
                     response_vec.extend_from_slice(&buffer[..=non_zero_idx]);
                     break;

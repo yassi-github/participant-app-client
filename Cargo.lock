@@ -218,8 +218,8 @@ dependencies = [
 ]
 
 [[package]]
-name = "participant-register"
-version = "0.1.0"
+name = "participant-app-client"
+version = "0.1.2"
 dependencies = [
  "chrono",
  "clap",

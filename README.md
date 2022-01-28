@@ -10,7 +10,7 @@ Client side of an application to record participants in a SLP.
 
 1. Download binary archive
 
-    Download excutable binary archived file from [here]().
+    Download excutable binary archived file from [here](https://github.com/yassi-github/participant-app-client/releases/latest).
 
 1. Extract
 
@@ -28,12 +28,12 @@ Client side of an application to record participants in a SLP.
     # User settings
     user:
         id: '19T999'
-        name: "kagawa-taro"
+        name: "名無"
 
     # Server information
     server:
         # Server IP address and Port number
-        destination: "192.168.12.14:1323"
+        destination: "127.0.0.1:1323"
         # Depends on: https://github.com/higuruchi/participant-app#register-user
         regist_path: "/user"
         # Depends on: https://github.com/higuruchi/participant-app#get-json-of-participants
@@ -74,7 +74,7 @@ Get today's participants list as "議事録" format.
 Example:
 
 ```sh
-$ ./participant-app get
+$ ./participant-app-client get
 ○ B4 金太郎
 ○ B3 銀太郎
 ○ B2 銅太郎、鉄太郎
@@ -86,7 +86,15 @@ Get the past participants, use `--year`, `--month`, `--day` options.
 Example:
 
 ```sh
-$ ./participant-app get --year 2021 --month 12 --day 24
+$ ./participant-app-client get --year 2021 --month 12 --day 24
 ○ B3 三太苦郎栖
 ○ B2 都中井
+```
+
+To show help, use `help` subcommand or `--help` flag.
+
+```sh
+$ ./participant-app-client help
+$ ./participant-app-client regist --help
+$ ./participant-app-client get --help
 ```

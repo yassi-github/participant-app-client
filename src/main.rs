@@ -1,7 +1,7 @@
 //! The client-side command line tool
 //! for [participant-app](https://github.com/higuruchi/participant-app).
 
-use participant_app_client::{Cli, Action, httpreq};
+use participant_app_client::{Cli, Action, httpreq, userdata, generate_body};
 use clap::Parser;
 
 /// Regist user infomation.
@@ -15,27 +15,33 @@ use clap::Parser;
 /// 1. Generate HTTP request body
 /// 1. regist_user by POST Request
 fn main() {
-    // request_body_data is like:
-    // "id={}\n\
-    // name={}\n\
-    // macaddress=aa:aa:aa:aa:aa:aa\n\
-    // "
-
     let args = Cli::parse();
 
     let subcmd_result: Result<String, Box<dyn std::error::Error>>;
+    let mut success_exit_message: String = String::from("");
     match args.action {
+        // change-macaddr subcommand
+        Action::ChangeMacaddr(change_macaddr_args) => {
+            subcmd_result = httpreq::put::change_macaddress(&change_macaddr_args);
+
+            let macaddr = &change_macaddr_args.macaddr;
+            success_exit_message = format!("Changed MAC Address to: {}", macaddr);
+        },
         // regist subcommand
         Action::Regist => {
-            //(仮)
             subcmd_result = httpreq::request::regist_user();
-            // exit_message:
-            //    Hello, {stnum} {name}!
-            //    Information registed successfully.
-            //    Registed MAC Address: {macaddr}
-            //    Have a nice day!
-            // expected:
-            // subcmd_result = httpreq::request::regist_user(regist_args.name, regist_args.stnum);
+
+            let message_macaddr = format!("Registed MAC Address: {}", generate_body::mac::gen_mac().expect("Failed to get MAC address!").to_string());
+
+            let readed_userdata = userdata::input_yaml::read_settings().expect("Failed to read config file!").user;
+            success_exit_message = format!("
+Domo, {stnum} {name}-san!
+Information registed successfully.
+{message_macaddr}
+
+If you want to change your MAC address,
+please run `participant-app-client change-macaddr --macaddr <CORRECT MACADDRESS>` command.
+", stnum = readed_userdata.id, name = readed_userdata.name, message_macaddr = message_macaddr);
         },
         // get subcommand
         Action::Get(get_args) => {
@@ -45,7 +51,32 @@ fn main() {
 
     // exit with status code.
     std::process::exit(match subcmd_result {
-        Ok(exit_message) => {
+        Ok(response) => {
+            let exit_message: String = match participant_app_client::read_resposne_message(&response) {
+                // response JSON key was "message" (Error message)
+                Ok(message) => {
+                    // internal server error
+                    if message == "Internal Server Error" {
+                        String::from("Oops! An error has occurred in the API Server...\nYou might already registed your MAC address?")
+                    // other error
+                    } else {
+                        format!("Error: {}", message)
+                    }
+                },
+                // case: get, successed(e.g. {Status: .+})
+                Err(_) => {                
+                    match response.as_str() {
+                        // regist or change-macaddr successed
+                        "{\"Status\":true}\n" => {
+                            success_exit_message
+                        },
+                        // get response
+                        _ => {
+                            response
+                        }
+                    }
+                }
+            };
             println!("{}", exit_message);
             0
         },

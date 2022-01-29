@@ -1,4 +1,3 @@
-use crate::userdata::input_yaml;
 use crate::httpreq;
 
 use std::collections::HashMap;
@@ -8,7 +7,8 @@ use serde_json;
 pub fn get_participants(date_args: crate::GetArgs)-> Result<String, Box<dyn std::error::Error>> {
 
     // replace :year, :month, :day in yaml file
-    let path = input_yaml::read_settings()?.server.get_path;
+    let request_path: httpreq::RequestPath = Default::default();
+    let path: String = request_path.get_path;
     let path = path.replace(":year", &date_args.year.to_string());
     let path = path.replace(":month", &date_args.month.to_string());
     let path = path.replace(":day", &date_args.day.to_string());

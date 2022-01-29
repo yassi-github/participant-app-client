@@ -41,7 +41,7 @@ pub fn fetch(params: Params) -> Result<String, Box<dyn std::error::Error>> {
             // create post request body
             request_content_string = match params.body {
                 Some(body) => format!(
-"Content-Type: application/x-www-form-urlencoded\r\n\
+"Content-Type: application/json\r\n\
 Content-Length: {}\r\n\
 \r\n\
 {}",

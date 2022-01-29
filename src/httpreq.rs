@@ -1,5 +1,6 @@
 pub mod get;
-pub mod request;
+pub mod post;
+pub mod put;
 
 use crate::userdata::input_yaml;
 
@@ -11,11 +12,28 @@ use std::net::TcpStream;
 pub enum HttpMethod {
     Get,
     Post,
+    Put,
 }
 
 impl Default for HttpMethod {
     fn default() -> Self {
         HttpMethod::Get
+    }
+}
+
+pub struct RequestPath {
+    pub get_path: String,
+    pub regist_path: String,
+    pub change_macaddr_path: String,
+}
+
+impl Default for RequestPath {
+    fn default() -> Self {
+        RequestPath {
+            get_path: String::from("/participants/:year/:month/:day"),
+            regist_path: String::from("/user"),
+            change_macaddr_path: String::from("/macaddr"),
+        }
     }
 }
 
@@ -29,7 +47,9 @@ pub struct Params {
 const BUFFER_SIZE: usize = 256;
 
 pub fn fetch(params: Params) -> Result<String, Box<dyn std::error::Error>> {
+    // HTTP body data
     let request_content_string: String;
+    // create body data per method
     let method = match params.method {
         HttpMethod::Get => {
             // WILL create get url params like:
@@ -51,6 +71,20 @@ Content-Length: {}\r\n\
                 None => String::new(),
             };
             "POST"
+        }
+        HttpMethod::Put => {
+            request_content_string = match params.body {
+                Some(body) => format!(
+"Content-Type: application/json\r\n\
+Content-Length: {}\r\n\
+\r\n\
+{}",
+                    body.len(),
+                    body
+                ),
+                None => String::new(),
+            };
+            "PUT"
         }
     };
 

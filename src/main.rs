@@ -29,7 +29,7 @@ fn main() {
         },
         // regist subcommand
         Action::Regist => {
-            subcmd_result = httpreq::request::regist_user();
+            subcmd_result = httpreq::post::regist_user();
 
             let message_macaddr = format!("Registed MAC Address: {}", generate_body::mac::gen_mac().expect("Failed to get MAC address!").to_string());
 

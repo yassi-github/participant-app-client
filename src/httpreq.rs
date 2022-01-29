@@ -1,5 +1,5 @@
 pub mod get;
-pub mod request;
+pub mod post;
 pub mod put;
 
 use crate::userdata::input_yaml;

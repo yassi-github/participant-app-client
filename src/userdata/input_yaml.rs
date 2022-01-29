@@ -16,8 +16,6 @@ pub struct UserData {
 #[derive(Debug, Deserialize)]
 pub struct DestData {
     pub destination: String,
-    pub regist_path: String,
-    pub get_path: String,
 }
 
 /// read user conf from yaml file
@@ -29,8 +27,6 @@ pub struct DestData {
 ///     name: "kagawa-sabro"
 /// server:
 ///     destination: "192.168.12.14:1323"
-///     regist_path: "/user"
-///     get_path: "/participants/:year/:month/:day"
 /// ```
 pub fn read_settings() -> Result<SettingsData, Box<dyn std::error::Error>> {
     // read from yaml file

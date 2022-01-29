@@ -34,10 +34,6 @@ Client side of an application to record participants in a SLP.
     server:
         # Server IP address and Port number
         destination: "127.0.0.1:1323"
-        # Depends on: https://github.com/higuruchi/participant-app#register-user
-        regist_path: "/user"
-        # Depends on: https://github.com/higuruchi/participant-app#get-json-of-participants
-        get_path: "/participants/:year/:month/:day"
     ```
 
 1. Regist your information
@@ -97,4 +93,5 @@ To show help, use `help` subcommand or `--help` flag.
 $ ./participant-app-client help
 $ ./participant-app-client regist --help
 $ ./participant-app-client get --help
+$ ./participant-app-client change-macaddr --help
 ```
